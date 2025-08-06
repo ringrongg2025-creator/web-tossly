@@ -142,6 +142,7 @@
             border-radius: 10px;
             margin-bottom: 2rem;
             transition: all 0.3s ease;
+            display: inline-block;
         }
 
         .back-btn:hover {
@@ -171,7 +172,7 @@
                             <a class="nav-link" href="#download">İndir</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" onclick="showPrivacy()">Gizlilik</a>
+                            <a class="nav-link" href="#privacy-policy">Gizlilik</a>
                         </li>
                     </ul>
                 </div>
@@ -274,7 +275,7 @@
                     <div class="col-md-6">
                         <h5 class="fw-bold mb-3">Bağlantılar</h5>
                         <ul class="list-unstyled">
-                            <li><a href="#" onclick="showPrivacy()" class="text-white-50 text-decoration-none">Gizlilik Politikası</a></li>
+                            <li><a href="#privacy-policy" class="text-white-50 text-decoration-none">Gizlilik Politikası</a></li>
                         </ul>
                     </div>
                 </div>
@@ -289,9 +290,9 @@
     <!-- Privacy Policy Section -->
     <div id="privacy-page" class="privacy-section">
         <div class="container">
-            <button class="back-btn" onclick="showHome()">
+            <a href="#" class="back-btn text-decoration-none">
                 <i class="bi bi-arrow-left me-2"></i>Ana Sayfaya Dön
-            </button>
+            </a>
             
             <div class="row justify-content-center">
                 <div class="col-lg-8">
@@ -376,22 +377,54 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // SPA Router with hash-based routing
         function showPrivacy() {
             document.getElementById('home-page').style.display = 'none';
             document.getElementById('privacy-page').classList.add('active');
+            window.location.hash = '#privacy-policy';
+            document.title = 'Gizlilik Politikası - Tossly';
         }
 
         function showHome() {
             document.getElementById('home-page').style.display = 'block';
             document.getElementById('privacy-page').classList.remove('active');
+            window.location.hash = '';
+            document.title = 'Tossly - Su Temalı Ring Toss Oyunu';
         }
 
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        // Handle hash changes
+        function handleHashChange() {
+            const hash = window.location.hash;
+            
+            if (hash === '#privacy-policy') {
+                document.getElementById('home-page').style.display = 'none';
+                document.getElementById('privacy-page').classList.add('active');
+                document.title = 'Gizlilik Politikası - Tossly';
+            } else {
+                document.getElementById('home-page').style.display = 'block';
+                document.getElementById('privacy-page').classList.remove('active');
+                document.title = 'Tossly - Su Temalı Ring Toss Oyunu';
+            }
+        }
+
+        // Listen for hash changes (back/forward buttons)
+        window.addEventListener('hashchange', handleHashChange);
+
+        // Initialize router on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            handleHashChange(); // Handle initial hash
+        });
+
+        // Smooth scrolling for anchor links (only for home page navigation)
+        document.querySelectorAll('a[href^="#"]:not([onclick])').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                // Skip privacy-policy hash
+                if (href === '#privacy-policy') return;
+                
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
+                const target = document.querySelector(href);
+                if (target && document.getElementById('home-page').style.display !== 'none') {
                     target.scrollIntoView({
                         behavior: 'smooth',
                         block: 'start'
